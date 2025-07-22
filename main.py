@@ -18,4 +18,4 @@ def echo():
 
 # Required by Google Cloud Functions
 def main(request):
-    return app(request)
+    return app(request, start_response=_start_response)
