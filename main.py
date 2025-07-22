@@ -1,25 +1,19 @@
-from flask import Flask, request, jsonify
+import json
 
-app = Flask(__name__)
-
-@app.route('/')
-def index():
-    return 'Hello, world!'
-
-@app.route('/hello', methods=['GET'])
-def hello():
-    return 'Hello from Flask in Cloud Function!', 200
-
-@app.route('/echo', methods=['POST'])
-def echo():
-    if request.is_json:
-        data = request.get_json()
-        return jsonify({
-            'received': data
-        }), 200
-    else:
-        return jsonify({'error': 'Request must be JSON'}), 400
-
-# Required by Google Cloud Functions
 def main(request):
-    return app(request, start_response=_start_response)
+    path = request.path
+    method = request.method
+
+    if path == '/hello' and method == 'GET':
+        return ('Hello from Python (no Flask)!', 200, {'Content-Type': 'text/plain'})
+
+    elif path == '/echo' and method == 'POST':
+        try:
+            data = request.get_json(force=True)
+            response = {'received': data}
+            return (json.dumps(response), 200, {'Content-Type': 'application/json'})
+        except Exception as e:
+            return (json.dumps({'error': str(e)}), 400, {'Content-Type': 'application/json'})
+
+    else:
+        return ('Not Found', 404, {'Content-Type': 'text/plain'})
