@@ -2,6 +2,10 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+@app.route('/')
+def index():
+    return 'Hello, world!'
+
 @app.route('/hello', methods=['GET'])
 def hello():
     return 'Hello from Flask in Cloud Function!', 200
